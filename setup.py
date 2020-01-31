@@ -20,7 +20,6 @@ setup(
     classifiers=[],
     install_requires=[
         "pandas",
-        "numpy",
-        "rsa"
+        "numpy"
     ],
 )
