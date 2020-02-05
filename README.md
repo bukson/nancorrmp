@@ -53,17 +53,32 @@ assert_frame_equal(corr, corr_pandas)
 
 NaNCorrMp Methods
 =================
-`nancorrmp` module has one static class named `NaNCorrMp` with 2 public methods
+`nancorrmp` module has one static class named `NaNCorrMp` with 2 public methods and 1 type
 
-**NaNCorrMp.calculate(X: pd.DataFrame, n_jobs: int = -1, chunks: int = 500) -> pd.DataFrame**
+**ArrayLike = Union[pd.DataFrame, np.ndarray]**
+
+
+Type used to unify `pd.DataFrame` and `np.ndarray`. 
+
+
+**NaNCorrMp.calculate(X: ArrayLike, n_jobs: int = -1, chunks: int = 500) -> ArrayLike**
 
 Calculates correlation matrix using Pearson correlation. `n_jobs` controls number of cores to use
 with default -1 which uses all available cores. `chunks` controls how many pairs of arrays are send to
-each process, 500 should be suitable for all purposes. When `n_jobs` is 1 it calls `NaNCorrMp.calculate_with_single_core`.
+each process, 500 should be suitable for all purposes. 
 
-**NaNCorrMp.calculate_with_single_core(X: pd.DataFrame) -> pd.DataFrame**
+Returns output as the same type as input, if `X` is `pd.Dataframe` it will return `pd.Dataframe`, if
+`X` is `np.ndarray` it will return `np.ndarray`.
+
+When `n_jobs` is 1 it calls `NaNCorrMp.calculate_with_single_core`.
+
+
+**NaNCorrMp.calculate_with_single_core(X: ArrayLike) -> ArrayLike**
 
 Calculates correlation matrix using Pearson correlation with one core.
+
+Returns output as the same type as input, if `X` is `pd.Dataframe` it will return `pd.Dataframe`, if
+`X` is `np.ndarray` it will return `np.ndarray`.
 
 
 Benchmark

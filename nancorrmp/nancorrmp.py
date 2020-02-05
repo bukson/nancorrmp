@@ -7,6 +7,7 @@ from typing import *
 
 shared_variables_dictionary = {}
 
+ArrayLike = Union[pd.DataFrame, np.ndarray]
 
 class NaNCorrMp:
 
@@ -19,11 +20,11 @@ class NaNCorrMp:
         shared_variables_dictionary['X_corr_shape'] = X_corr_shape
 
     @staticmethod
-    def calculate(X: pd.DataFrame, n_jobs: int = -1, chunks: int = 500) -> pd.DataFrame:
+    def calculate(X: ArrayLike, n_jobs: int = -1, chunks: int = 500) -> ArrayLike:
         if n_jobs == 1:
             return NaNCorrMp.calculate_with_single_core(X)
 
-        X_array = X.to_numpy(dtype=np.float64, copy=True).transpose()
+        X_array = X.to_numpy(dtype=np.float64, copy=True).transpose() if type(X) == pd.DataFrame else X
         finite_mask_data = np.isfinite(X_array)
         X_corr = np.ndarray(shape=(X_array.shape[0], X_array.shape[0]), dtype=np.float64)
 
@@ -40,17 +41,23 @@ class NaNCorrMp:
 
         arguments = ((j, i) for i in range(X_array.shape[0]) for j in range(i))
         processes = n_jobs if n_jobs > 0 else None
+
         with mp.Pool(processes=processes,
                      initializer=NaNCorrMp._init_worker,
                      initargs=(X_raw, finite_mask_raw, X_corr_raw, X_np.shape, X_corr_np.shape)) \
                 as pool:
             list(pool.imap_unordered(NaNCorrMp._corr, arguments, chunks))
+
         for i in range(X_corr_np.shape[0]):
             X_corr_np[i][i] = 1.0
-        return pd.DataFrame(X_corr_np, columns=X.columns, index=X.columns)
+
+        if type(X) == pd.DataFrame:
+            return pd.DataFrame(X_corr_np, columns=X.columns, index=X.columns)
+        else:
+            return X_corr_np
 
     @staticmethod
-    def calculate_with_single_core(X: pd.DataFrame) -> pd.DataFrame:
+    def calculate_with_single_core(X: ArrayLike) -> ArrayLike:
         X_array = X.to_numpy(dtype=np.float64).transpose()
         coeffs = np.ndarray(shape=(X_array.shape[0], X_array.shape[0]), dtype=np.float64)
         finite_mask_data = np.isfinite(X_array)

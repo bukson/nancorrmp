@@ -1,5 +1,7 @@
 import unittest
 import pandas as pd
+import numpy as np
+from numpy.testing import assert_array_almost_equal
 from pandas.testing import assert_frame_equal
 from nancorrmp.nancorrmp import NaNCorrMp
 
@@ -18,6 +20,12 @@ class TestNaNCorrMp(unittest.TestCase):
         result = NaNCorrMp.calculate(self.X_nans, n_jobs=2, chunks=1)
         expected_result = self.X_nans.corr()
         assert_frame_equal(result, expected_result)
+
+    def test_with_numpy_input(self) -> None:
+        result = NaNCorrMp.calculate(self.X_nans.to_numpy().transpose(), n_jobs=2, chunks=1)
+        self.assertEqual(type(result), np.ndarray)
+        expected_result = self.X_nans.corr()
+        assert_array_almost_equal(result, expected_result.to_numpy().transpose())
 
     def test_with_infs(self) -> None:
         result = NaNCorrMp.calculate(self.X_infs, n_jobs=2, chunks=1)

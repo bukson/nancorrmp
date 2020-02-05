@@ -29,10 +29,10 @@ class TestBenchmarkNaNCorrMp(unittest.TestCase):
         assert_array_almost_equal(nancorrmp_result.to_numpy(), pandas_result.to_numpy())
         self.assertTrue(nancorrmp_time < pandas_time)
 
-    @unittest.skip("computation to long")
+    # @unittest.skip("computation to long")
     def test_benchmark_with_pandas_with_nans(self) -> None:
         # faster when size > 1200, n_jobs=4
-        size = 1200
+        size = 5000
         n_jobs = 4
         np.random.seed(0)
         nan_infs_ratio = 0.03
