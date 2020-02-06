@@ -1,3 +1,6 @@
 .idea
 *.pyc
 venv
+build
+dist
+nancorrmp.egg-info
