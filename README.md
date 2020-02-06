@@ -8,7 +8,8 @@ Multiprocessing correlation calculation for Python
  `nancorrmp` utilizes Pearson correlation calculation code from `scipy`, that is based on `numpy` instead
  of `pandas` cythonic backed. The multiprocessing is implemented by python `multiprocessing` module. 
  `nancorrmp` uses `pandas` method of calculating correlations of arrays with NaNs and infs,
- that skips pair of observations when one of them is either Nan or +inf, or -inf.
+ that skips pair of observations when one of them is either Nan or +inf, or -inf. `nancorrmp` also
+ can calculate result with p values, similar to `scipy.pearsonr` function.
  
  Benchmarks are showing that with 4 cores, calculating correlation is faster with `nancorrmp` then with `pandas`
  even for 1200x1200 matrix. With 2 cores it is for 2400x2400. `pandas` single processed implementation is faster
@@ -49,6 +50,7 @@ random_dataframe = pd.DataFrame(np.random.rand(100, 100))
 corr = NaNCorrMp.calculate(random_dataframe)
 corr_pandas = random_dataframe.corr()
 assert_frame_equal(corr, corr_pandas)
+corr, p_value = NaNCorrMp.calculate_with_p_value(random_dataframe)
 ```
 
 NaNCorrMp Methods
@@ -70,15 +72,36 @@ each process, 500 should be suitable for all purposes.
 Returns output as the same type as input, if `X` is `pd.Dataframe` it will return `pd.Dataframe`, if
 `X` is `np.ndarray` it will return `np.ndarray`.
 
-When `n_jobs` is 1 it calls `NaNCorrMp.calculate_with_single_core`.
+```python
+import pandas as pd
+import numpy as np
+from nancorrmp.nancorrmp import NaNCorrMp
+
+np.random.seed(0)
+random_dataframe = pd.DataFrame(np.random.rand(100, 100))
+corr = NaNCorrMp.calculate(random_dataframe)
+```
 
 
-**NaNCorrMp.calculate_with_single_core(X: ArrayLike) -> ArrayLike**
+**NaNCorrMp.calculate_with_p_value(X: ArrayLike, n_jobs: int = -1, chunks: int = 500) -> Tuple[ArrayLike, ArrayLike]**
 
-Calculates correlation matrix using Pearson correlation with one core.
+Calculates correlation matrix and p value matrix using Pearson correlation. `n_jobs` controls number of cores to use
+with default -1 which uses all available cores. `chunks` controls how many pairs of arrays are send to
+each process, 500 should be suitable for all purposes. Correlation and p value are the same as the result of 
+using `scipy.pearsonr`, but it can be used with NaNs and infs and multiple cores.
 
-Returns output as the same type as input, if `X` is `pd.Dataframe` it will return `pd.Dataframe`, if
-`X` is `np.ndarray` it will return `np.ndarray`.
+Returns output as similar type as input, if `X` is `pd.Dataframe` it will return `(pd.Dataframe, pd.Dataframe)`, if
+`X` is `np.ndarray` it will return `(np.ndarray, np.ndarray)`.
+
+```python
+import pandas as pd
+import numpy as np
+from nancorrmp.nancorrmp import NaNCorrMp
+
+np.random.seed(0)
+random_dataframe = pd.DataFrame(np.random.rand(100, 100))
+corr, p_value = NaNCorrMp.calculate_with_p_value(random_dataframe)
+```
 
 
 Benchmark
