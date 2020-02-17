@@ -137,7 +137,10 @@ Test
 
 `test` module contains test both for single core usage as for multiple cores. Tests asserts
 then the outuput of `NaNCorrMp.calculate` is the same as output of `pandas.corr` for the same data. 
-
+Tests require `scipy` and can be run with the following command:
+```bash
+python setup.py test
+```
 Licencse
 ========
 

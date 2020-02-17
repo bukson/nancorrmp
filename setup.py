@@ -1,8 +1,8 @@
 from setuptools import setup
 import sys
 
-if not sys.version_info[0] == 3 and sys.version_info[1] < 5:
-    sys.exit('Python < 3.5 is not supported')
+if not sys.version_info[0] == 3 and sys.version_info[1] < 6:
+    sys.exit('Python < 3.6 is not supported')
 
 version = '0.2'
 
@@ -19,7 +19,10 @@ setup(
     keywords=['correlation', 'multiprocessing', 'pandas'],
     classifiers=[],
     install_requires=[
-        "pandas",
-        "numpy"
+        'pandas',
+        'numpy',
+    ],
+    tests_require=[
+        'scipy'
     ],
 )
