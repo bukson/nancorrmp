@@ -1,5 +1,8 @@
 Multiprocessing correlation calculation for Python
 =======================
+
+![Travis build](https://travis-ci.com/bukson/nancorrmp.svg?branch=master)
+
 `nancorrmp` is a small module for calculating correlations of big numpy arrays or pandas dataframes with
  NaNs and infs, using multiple cores. Default `numpy.corrcoef` method does not calculate correlations
  with input that contains NaNs and infs and `pandas` method `pandas.DataFrame.corr` is single thread
