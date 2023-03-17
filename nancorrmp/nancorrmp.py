@@ -42,7 +42,7 @@ class NaNCorrMp:
 
         finite_mask_data = np.isfinite(X_array)
         finite_mask_raw = RawArray(ctypes.c_bool, X_array.shape[0] * X_array.shape[1])
-        finite_mask_np = np.frombuffer(finite_mask_raw, dtype=np.bool).reshape(X_array.shape)
+        finite_mask_np = np.frombuffer(finite_mask_raw, dtype=bool).reshape(X_array.shape)
         np.copyto(finite_mask_np, finite_mask_data)
 
         X_corr = np.ndarray(shape=(X_array.shape[0], X_array.shape[0]), dtype=np.float64)
