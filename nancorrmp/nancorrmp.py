@@ -61,7 +61,8 @@ class NaNCorrMp:
 
         arguments = ((j, i) for i in range(X_array.shape[0]) for j in range(i))
 
-        another_arg = arguments.copy()
+        another_arg = ((j, i) for i in range(X_array.shape[0]) for j in range(i))
+
         len_arg = len(list(another_arg))
         del another_arg
         processes = n_jobs if n_jobs > 0 else None
